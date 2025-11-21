@@ -153,9 +153,9 @@ def main():
         
         # Try to get key from secrets, otherwise ask for it
         if "GOOGLE_API_KEY" in st.secrets:
-        api_key = st.secrets["GOOGLE_API_KEY"]
+            api_key = st.secrets["GOOGLE_API_KEY"]
         else:
-        api_key = st.text_input("Enter Google Gemini API Key", type="password")
+            api_key = st.text_input("Enter Google Gemini API Key", type="password")
         st.caption("[Get a free key here](https://aistudio.google.com/app/apikey)")
         
         uploaded_file = st.file_uploader("Upload Lesson Material", type=['pdf', 'docx'])

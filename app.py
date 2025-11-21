@@ -18,7 +18,158 @@ UNIT_DATA = {
     ],
 
     # PASTE NEW UNITS BELOW THIS LINE ----------------
-    
+    "Unit 1": [
+    {
+        "word": "exchange",
+        "phonetic": "/Iksˈtʃeɪndʒ/",
+        "chinese_meaning": "交换；交流",
+        "phrases": [
+            "exchange ideas",
+            "in exchange for"
+        ],
+        "fun_sentence": "My classmate offered to exchange his math homework for my delicious bubble tea, but I just gave him the tea because sharing is caring, right?"
+    },
+    {
+        "word": "registration",
+        "phonetic": "/ˌredʒɪˈstreɪʃn/",
+        "chinese_meaning": "登记；注册；挂号",
+        "phrases": [
+            "student registration",
+            "online registration"
+        ],
+        "fun_sentence": "The first day of school was chaos, but at least the registration process was faster than waiting in line for a new iPhone."
+    },
+    {
+        "word": "anxious",
+        "phonetic": "/ˈæŋkʃəs/",
+        "chinese_meaning": "焦虑的；不安的",
+        "phrases": [
+            "anxious about",
+            "feel anxious"
+        ],
+        "fun_sentence": "I always feel anxious before a big exam, like my brain might just decide to take a nap during the test."
+    },
+    {
+        "word": "outgoing",
+        "phonetic": "/ˈaʊtɡəʊɪŋ/",
+        "chinese_meaning": "爱交际的；外向的",
+        "phrases": [
+            "an outgoing personality",
+            "outgoing and friendly"
+        ],
+        "fun_sentence": "My best friend is so outgoing, she could probably make friends with a brick wall, while I'm over here, just trying to make eye contact with the cashier."
+    },
+    {
+        "word": "impression",
+        "phonetic": "/ɪmˈpreʃn/",
+        "chinese_meaning": "印象；感想",
+        "phrases": [
+            "make an impression",
+            "first impression"
+        ],
+        "fun_sentence": "I tried to make a good impression on my crush by accidentally tripping and spilling my coffee everywhere, which definitely left an *impression*... just maybe not the one I wanted."
+    },
+    {
+        "word": "concentrate",
+        "phonetic": "/ˈkɒnsntreɪt/",
+        "chinese_meaning": "集中（注意力）；聚精会神",
+        "phrases": [
+            "concentrate on one's studies",
+            "concentrate hard"
+        ],
+        "fun_sentence": "I try to concentrate on my homework, but my phone keeps sending me notifications, like it's saying, 'Hey, remember me? I'm way more fun!'"
+    },
+    {
+        "word": "awkward",
+        "phonetic": "/ˈɔːkwəd/",
+        "chinese_meaning": "令人尴尬的；难对付的",
+        "phrases": [
+            "awkward silence",
+            "feel awkward"
+        ],
+        "fun_sentence": "That moment when you wave back at someone who wasn't waving at you? Yeah, that's pure awkwardness, like trying to exit a video call gracefully."
+    },
+    {
+        "word": "explore",
+        "phonetic": "/ɪkˈsplɔː(r)/",
+        "chinese_meaning": "探索；勘探",
+        "phrases": [
+            "explore new cultures",
+            "explore possibilities"
+        ],
+        "fun_sentence": "My parents always tell me to explore the world, but I'm just trying to explore the new levels in my favorite game right now."
+    },
+    {
+        "word": "confident",
+        "phonetic": "/ˈkɒnfɪdənt/",
+        "chinese_meaning": "自信的；有把握的",
+        "phrases": [
+            "feel confident",
+            "confident in oneself"
+        ],
+        "fun_sentence": "I feel most confident when I'm wearing my lucky exam socks, even if they have a tiny hole in the toe."
+    },
+    {
+        "word": "strategy",
+        "phonetic": "/ˈstrætədʒi/",
+        "chinese_meaning": "策略；策划",
+        "phrases": [
+            "marketing strategy",
+            "winning strategy"
+        ],
+        "fun_sentence": "My strategy for surviving Monday mornings is to pretend I'm still asleep for as long as humanly possible."
+    },
+    {
+        "word": "curious",
+        "phonetic": "/ˈkjʊəriəs/",
+        "chinese_meaning": "好奇的；求知欲强的",
+        "phrases": [
+            "be curious about",
+            "curious mind"
+        ],
+        "fun_sentence": "I'm always curious about what my teachers do on weekends, like if they secretly have superpowers or just binge-watch dramas like us."
+    },
+    {
+        "word": "revise",
+        "phonetic": "/rɪˈvaɪz/",
+        "chinese_meaning": "修改；修订；复习",
+        "phrases": [
+            "revise for an exam",
+            "revise a document"
+        ],
+        "fun_sentence": "My brain's revision strategy for history is to cram everything last minute, then hope for the best, which is probably not a good strategy at all."
+    },
+    {
+        "word": "challenge",
+        "phonetic": "/ˈtʃælɪndʒ/",
+        "chinese_meaning": "挑战；艰巨任务",
+        "phrases": [
+            "face a challenge",
+            "meet a challenge"
+        ],
+        "fun_sentence": "Getting out of bed on a cold winter morning is my biggest daily challenge, often requiring multiple alarm clocks and a motivational speech to myself."
+    },
+    {
+        "word": "recommend",
+        "phonetic": "/ˌrekəˈmend/",
+        "chinese_meaning": "建议；推荐；介绍",
+        "phrases": [
+            "highly recommend",
+            "recommend doing something"
+        ],
+        "fun_sentence": "I would recommend this drama to anyone who needs a good cry, but not during exam season, trust me, I've learned from experience."
+    },
+    {
+        "word": "responsible",
+        "phonetic": "/rɪˈspɒnsəbl/",
+        "chinese_meaning": "负责的；有责任的",
+        "phrases": [
+            "be responsible for",
+            "responsible citizen"
+        ],
+        "fun_sentence": "Being responsible for my younger sibling means I have to pretend to be an adult, which is a big challenge when I still struggle with my own laundry."
+    }
+],
     # "Unit 1": [ ... paste code here ... ],
     # "Unit 2": [ ... paste code here ... ],
 

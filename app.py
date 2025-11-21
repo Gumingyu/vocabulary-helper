@@ -22,8 +22,31 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- FUNCTIONS ---
+# --- HELPER: AUTO-DETECT MODEL ---
+def get_active_model_name(api_key):
+    """automatically finds a working model name to avoid 404 errors"""
+    genai.configure(api_key=api_key)
+    try:
+        # 1. Ask Google what models are available
+        models = list(genai.list_models())
+        
+        # 2. Look for a 'generateContent' model, prefer 'flash' for speed
+        for m in models:
+            if 'generateContent' in m.supported_generation_methods:
+                if 'flash' in m.name.lower():
+                    return m.name
+        
+        # 3. If no flash, take the first available generic one (usually gemini-pro)
+        for m in models:
+            if 'generateContent' in m.supported_generation_methods:
+                return m.name
+                
+        return "models/gemini-pro" # Absolute fallback
+    except Exception as e:
+        # If we can't list models, guess a safe standard
+        return "models/gemini-1.5-flash"
 
+# --- HELPER: EXTRACT TEXT ---
 def extract_text(uploaded_file):
     text = ""
     try:
@@ -39,12 +62,14 @@ def extract_text(uploaded_file):
         st.error(f"File Read Error: {e}")
     return text
 
+# --- MAIN AI FUNCTION ---
 def get_gemini_response(api_key, text_content):
-    genai.configure(api_key=api_key)
+    # Auto-detect the correct model name
+    model_name = get_active_model_name(api_key)
     
-    # 1. Use the most stable model currently available
-    # Try 'gemini-1.5-flash' first (standard), fallback to 'gemini-pro'
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    # Configure
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel(model_name)
 
     prompt = f"""
     Act as an English Teacher for Chinese students.
@@ -68,37 +93,29 @@ def get_gemini_response(api_key, text_content):
     try:
         response = model.generate_content(prompt)
         
-        # 2. DEBUG: If response is empty/blocked
         if not response.text:
-            st.error("AI returned an empty response. This usually means a Safety Filter triggered.")
             return []
 
-        # 3. ROBUST PARSING (The fix for your error)
-        # Instead of trusting the whole string, we use Regex to find the [...] list
+        # Regex search for JSON list [...]
         match = re.search(r'\[.*\]', response.text, re.DOTALL)
-        
         if match:
-            json_str = match.group(0)
-            return json.loads(json_str)
+            return json.loads(match.group(0))
         else:
-            # If no JSON found, show the raw text to debug
-            st.warning("AI didn't return valid JSON. Here is what it said:")
-            st.code(response.text)
             return []
 
     except Exception as e:
-        st.error(f"Connection Error: {e}")
+        st.error(f"AI Error ({model_name}): {e}")
         return []
 
-# --- MAIN APP ---
+# --- MAIN APP UI ---
 def main():
     with st.sidebar:
         st.header("Teacher Setup")
         
-        # API Key Handling
+        # Handle Secrets vs Input
         if "GOOGLE_API_KEY" in st.secrets:
             api_key = st.secrets["GOOGLE_API_KEY"]
-            st.success("Key loaded!")
+            st.success("Key loaded automatically")
         else:
             api_key = st.text_input("API Key", type="password")
 
@@ -108,17 +125,19 @@ def main():
             if not api_key or not uploaded_file:
                 st.warning("Need Key and File!")
             else:
-                with st.spinner("Reading file..."):
+                with st.spinner("Finding best AI model & reading file..."):
                     raw_text = extract_text(uploaded_file)
-                    if len(raw_text) < 50:
-                        st.error("Could not read text from this file! Is it a scanned image?")
+                    if len(raw_text) < 10:
+                        st.error("Text too short. Is this a scanned image?")
                     else:
                         data = get_gemini_response(api_key, raw_text)
                         if data:
                             st.session_state['vocab_data'] = data
                             st.success("Done!")
+                        else:
+                            st.error("AI failed to generate. Try again.")
 
-    # Display
+    # Display Content
     if 'vocab_data' in st.session_state:
         tabs = st.tabs(["Flashcards", "Quiz"])
         
@@ -126,19 +145,22 @@ def main():
             for item in st.session_state['vocab_data']:
                 st.markdown(f"""
                 <div class="vocab-card">
-                    <div class="word-title">{item['word']} <span style="font-size:14px;color:#666">{item.get('phonetic','')}</span></div>
-                    <div class="meaning">{item['chinese_meaning']}</div>
-                    <div style="margin-top:10px;color:#444">👉 {', '.join(item['phrases'])}</div>
-                    <div class="funny-sentence">"{item['fun_sentence']}"</div>
+                    <div class="word-title">{item.get('word','')} <span style="font-size:14px;color:#666">{item.get('phonetic','')}</span></div>
+                    <div class="meaning">{item.get('chinese_meaning','')}</div>
+                    <div style="margin-top:10px;color:#444">👉 {', '.join(item.get('phrases',[]))}</div>
+                    <div class="funny-sentence">"{item.get('fun_sentence','')}"</div>
                 </div>
                 """, unsafe_allow_html=True)
 
         with tabs[1]:
             for i, item in enumerate(st.session_state['vocab_data']):
-                blank = re.sub(re.escape(item['word']), "_______", item['fun_sentence'], flags=re.I)
+                word = item.get('word','')
+                sent = item.get('fun_sentence','')
+                blank = re.sub(re.escape(word), "_______", sent, flags=re.I)
+                
                 st.markdown(f"**{i+1}.** {blank}")
                 if st.button(f"Reveal Answer {i+1}"):
-                    st.success(f"{item['word']} ({item['chinese_meaning']})")
+                    st.success(f"{word} ({item.get('chinese_meaning','')})")
                 st.divider()
 
 if __name__ == "__main__":

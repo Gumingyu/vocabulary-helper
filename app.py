@@ -8,7 +8,128 @@ import re
 # ==========================================
 # 👇 TEACHER: PASTE YOUR GENERATED DATA HERE 👇
 # ==========================================
-LESSON_DATA = [] 
+LESSON_DATA = [
+    {
+        "word": "Awkward",
+        "phonetic": "/O:kwd/",
+        "chinese_meaning": "令人尴尬的；难对付的",
+        "phrases": [
+            "feel awkward",
+            "an awkward situation"
+        ],
+        "fun_sentence": "My first attempt at dancing was so awkward that I accidentally stepped on my teacher's foot!"
+    },
+    {
+        "word": "Impression",
+        "phonetic": "/Impren/",
+        "chinese_meaning": "印象；感想",
+        "phrases": [
+            "make an impression",
+            "first impression"
+        ],
+        "fun_sentence": "I tried to make a good impression on the cat, but it just yawned and walked away."
+    },
+    {
+        "word": "Concentrate",
+        "phonetic": "/knsntreIt/",
+        "chinese_meaning": "集中（注意力）；聚精会神",
+        "phrases": [
+            "concentrate on",
+            "concentrate on your studies"
+        ],
+        "fun_sentence": "I can't concentrate on my homework when there's a squirrel doing parkour outside my window!"
+    },
+    {
+        "word": "Outgoing",
+        "phonetic": "/atgIN/",
+        "chinese_meaning": "爱交际的；外向的",
+        "phrases": [
+            "an outgoing personality",
+            "outgoing and friendly"
+        ],
+        "fun_sentence": "My outgoing dog greets everyone at the park, even the trees!"
+    },
+    {
+        "word": "Anxious",
+        "phonetic": "/Nks/",
+        "chinese_meaning": "焦虑的；不安的",
+        "phrases": [
+            "anxious about",
+            "feel anxious"
+        ],
+        "fun_sentence": "I felt anxious waiting for my pizza, worried they might have run out of cheese!"
+    },
+    {
+        "word": "Suitable",
+        "phonetic": "/su:tbl/",
+        "chinese_meaning": "合适的；适用的",
+        "phrases": [
+            "suitable for",
+            "find something suitable"
+        ],
+        "fun_sentence": "This tiny hat is not suitable for my enormous brain, but it looks funny!"
+    },
+    {
+        "word": "Challenge",
+        "phonetic": "/tlInd/",
+        "chinese_meaning": "挑战；艰巨任务 (n.) / 怀疑；向……挑战 (vt.)",
+        "phrases": [
+            "face a challenge",
+            "take on a challenge"
+        ],
+        "fun_sentence": "It was a real challenge to teach my cat to fetch, but now he brings me socks!"
+    },
+    {
+        "word": "Confusing",
+        "phonetic": "/knfju:zIN/",
+        "chinese_meaning": "难以理解的；不清楚的",
+        "phrases": [
+            "a confusing situation",
+            "find something confusing"
+        ],
+        "fun_sentence": "The instruction manual for my new gadget was so confusing, it told me to 'turn left at the imaginary unicorn.'"
+    },
+    {
+        "word": "Responsible",
+        "phonetic": "/rIspnsbl/",
+        "chinese_meaning": "负责的；有责任的",
+        "phrases": [
+            "be responsible for",
+            "a responsible student"
+        ],
+        "fun_sentence": "Being responsible for watering the plants means I sometimes forget, and they give me the 'leafy silent treatment.'"
+    },
+    {
+        "word": "Accommodation",
+        "phonetic": "/kmdeIn/",
+        "chinese_meaning": "住处；停留处；膳宿",
+        "phrases": [
+            "student accommodation",
+            "book accommodation"
+        ],
+        "fun_sentence": "Finding cheap accommodation for my pet squirrel was a challenge, especially since he demanded a nut-filled mini-fridge."
+    },
+    {
+        "word": "Strategy",
+        "phonetic": "/strtdi/",
+        "chinese_meaning": "策略；策划",
+        "phrases": [
+            "marketing strategy",
+            "a winning strategy"
+        ],
+        "fun_sentence": "My strategy for avoiding chores is to pretend I'm a statue, but my mom's strategy is to tickle me until I move."
+    },
+    {
+        "word": "Literature",
+        "phonetic": "/lItrt(r)/",
+        "chinese_meaning": "文学；文学作品",
+        "phrases": [
+            "Chinese literature",
+            "study literature"
+        ],
+        "fun_sentence": "I tried to read classic literature to my goldfish, but he seemed more interested in chasing bubbles."
+    }
+] 
 # (Currently empty. You will fill this in Step 3)
 # ==========================================
 

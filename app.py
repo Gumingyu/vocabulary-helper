@@ -5,6 +5,14 @@ import PyPDF2
 from docx import Document
 import re
 
+# ==========================================
+# 👇 TEACHER: PASTE YOUR GENERATED DATA HERE 👇
+# ==========================================
+LESSON_DATA = [] 
+# (Currently empty. You will fill this in Step 3)
+# ==========================================
+
+
 # --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="Vocab Master", page_icon="⚡", layout="wide")
 
@@ -22,146 +30,119 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- HELPER: AUTO-DETECT MODEL ---
+# --- HELPER FUNCTIONS ---
 def get_active_model_name(api_key):
-    """automatically finds a working model name to avoid 404 errors"""
     genai.configure(api_key=api_key)
     try:
-        # 1. Ask Google what models are available
         models = list(genai.list_models())
-        
-        # 2. Look for a 'generateContent' model, prefer 'flash' for speed
         for m in models:
             if 'generateContent' in m.supported_generation_methods:
-                if 'flash' in m.name.lower():
-                    return m.name
-        
-        # 3. If no flash, take the first available generic one (usually gemini-pro)
-        for m in models:
-            if 'generateContent' in m.supported_generation_methods:
-                return m.name
-                
-        return "models/gemini-pro" # Absolute fallback
-    except Exception as e:
-        # If we can't list models, guess a safe standard
-        return "models/gemini-1.5-flash"
+                if 'flash' in m.name.lower(): return m.name
+        return "models/gemini-pro"
+    except: return "models/gemini-1.5-flash"
 
-# --- HELPER: EXTRACT TEXT ---
 def extract_text(uploaded_file):
     text = ""
     try:
         if uploaded_file.name.endswith('.pdf'):
             pdf_reader = PyPDF2.PdfReader(uploaded_file)
-            for page in pdf_reader.pages:
-                text += page.extract_text() or ""
+            for page in pdf_reader.pages: text += page.extract_text() or ""
         elif uploaded_file.name.endswith('.docx'):
             doc = Document(uploaded_file)
-            for para in doc.paragraphs:
-                text += para.text + "\n"
-    except Exception as e:
-        st.error(f"File Read Error: {e}")
+            for para in doc.paragraphs: text += para.text + "\n"
+    except Exception as e: st.error(f"Error: {e}")
     return text
 
-# --- MAIN AI FUNCTION ---
 def get_gemini_response(api_key, text_content):
-    # Auto-detect the correct model name
     model_name = get_active_model_name(api_key)
-    
-    # Configure
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel(model_name)
-
     prompt = f"""
-    Act as an English Teacher for Chinese students.
-    Extract 8-10 difficult words from the text below.
-    
+    Act as an English Teacher for Chinese students. Extract 8-12 difficult words.
     Return a JSON LIST. Format:
     [
       {{
-        "word": "Example",
-        "phonetic": "/Ig'za:mpl/",
-        "chinese_meaning": "例子",
-        "phrases": ["for example", "set an example"],
-        "fun_sentence": "A funny sentence using the word Example."
+        "word": "Word",
+        "phonetic": "/.../",
+        "chinese_meaning": "Meaning",
+        "phrases": ["phrase 1", "phrase 2"],
+        "fun_sentence": "Funny sentence."
       }}
     ]
-
-    TEXT:
-    {text_content[:5000]} 
+    TEXT: {text_content[:5000]} 
     """
-    
     try:
         response = model.generate_content(prompt)
-        
-        if not response.text:
-            return []
-
-        # Regex search for JSON list [...]
         match = re.search(r'\[.*\]', response.text, re.DOTALL)
-        if match:
-            return json.loads(match.group(0))
-        else:
-            return []
-
-    except Exception as e:
-        st.error(f"AI Error ({model_name}): {e}")
+        if match: return json.loads(match.group(0))
         return []
+    except: return []
 
-# --- MAIN APP UI ---
+# --- MAIN APP LOGIC ---
 def main():
-    with st.sidebar:
-        st.header("Teacher Setup")
+    # CHECK: Is there data in LESSON_DATA?
+    if LESSON_DATA:
+        # ==========================================
+        # 🎓 STUDENT VIEW (What students see)
+        # ==========================================
+        st.title("⚡ English Power-Up")
+        st.caption("Lesson of the Week")
         
-        # Handle Secrets vs Input
-        if "GOOGLE_API_KEY" in st.secrets:
-            api_key = st.secrets["GOOGLE_API_KEY"]
-            st.success("Key loaded automatically")
-        else:
-            api_key = st.text_input("API Key", type="password")
-
-        uploaded_file = st.file_uploader("Upload PDF/Docx", type=['pdf', 'docx'])
-        
-        if st.button("Generate"):
-            if not api_key or not uploaded_file:
-                st.warning("Need Key and File!")
-            else:
-                with st.spinner("Finding best AI model & reading file..."):
-                    raw_text = extract_text(uploaded_file)
-                    if len(raw_text) < 10:
-                        st.error("Text too short. Is this a scanned image?")
-                    else:
-                        data = get_gemini_response(api_key, raw_text)
-                        if data:
-                            st.session_state['vocab_data'] = data
-                            st.success("Done!")
-                        else:
-                            st.error("AI failed to generate. Try again.")
-
-    # Display Content
-    if 'vocab_data' in st.session_state:
-        tabs = st.tabs(["Flashcards", "Quiz"])
+        tabs = st.tabs(["📖 Flashcards", "🧠 Quiz Mode"])
         
         with tabs[0]:
-            for item in st.session_state['vocab_data']:
+            for item in LESSON_DATA:
                 st.markdown(f"""
                 <div class="vocab-card">
-                    <div class="word-title">{item.get('word','')} <span style="font-size:14px;color:#666">{item.get('phonetic','')}</span></div>
-                    <div class="meaning">{item.get('chinese_meaning','')}</div>
+                    <div class="word-title">{item.get('word')} <span style="font-size:14px;color:#666">{item.get('phonetic','')}</span></div>
+                    <div class="meaning">{item.get('chinese_meaning')}</div>
                     <div style="margin-top:10px;color:#444">👉 {', '.join(item.get('phrases',[]))}</div>
-                    <div class="funny-sentence">"{item.get('fun_sentence','')}"</div>
+                    <div class="funny-sentence">"{item.get('fun_sentence')}"</div>
                 </div>
                 """, unsafe_allow_html=True)
 
         with tabs[1]:
-            for i, item in enumerate(st.session_state['vocab_data']):
-                word = item.get('word','')
-                sent = item.get('fun_sentence','')
-                blank = re.sub(re.escape(word), "_______", sent, flags=re.I)
-                
+            st.info("Guess the word!")
+            for i, item in enumerate(LESSON_DATA):
+                blank = re.sub(re.escape(item['word']), "_______", item['fun_sentence'], flags=re.I)
                 st.markdown(f"**{i+1}.** {blank}")
-                if st.button(f"Reveal Answer {i+1}"):
-                    st.success(f"{word} ({item.get('chinese_meaning','')})")
+                if st.button(f"Check Answer {i+1}"):
+                    st.success(f"{item['word']} ({item['chinese_meaning']})")
                 st.divider()
+
+    else:
+        # ==========================================
+        # 🛠 TEACHER VIEW (Generator)
+        # ==========================================
+        st.title("🛠 Teacher Generator")
+        st.warning("You are in 'Generator Mode'. Students will only see what you generate here.")
+        
+        with st.sidebar:
+            if "GOOGLE_API_KEY" in st.secrets:
+                api_key = st.secrets["GOOGLE_API_KEY"]
+            else:
+                api_key = st.text_input("API Key", type="password")
+            
+            uploaded_file = st.file_uploader("Upload Lesson PDF/Docx", type=['pdf', 'docx'])
+
+        if st.button("Generate Lesson Data", type="primary"):
+            if api_key and uploaded_file:
+                with st.spinner("Generating..."):
+                    raw_text = extract_text(uploaded_file)
+                    data = get_gemini_response(api_key, raw_text)
+                    
+                    if data:
+                        st.success("Success! Copy the code below:")
+                        st.markdown("### 👇 COPY EVERYTHING IN THIS BOX 👇")
+                        
+                        # Print the data formatted as Python code
+                        code_to_copy = f"LESSON_DATA = {json.dumps(data, ensure_ascii=False, indent=4)}"
+                        st.code(code_to_copy, language="python")
+                        
+                        st.markdown("### 🛑 Next Step:")
+                        st.info("1. Copy the code above.\n2. Go to GitHub -> app.py.\n3. Delete 'LESSON_DATA = []'.\n4. Paste your code there.\n5. Commit changes.")
+                    else:
+                        st.error("AI failed. Try again.")
 
 if __name__ == "__main__":
     main()

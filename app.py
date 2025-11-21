@@ -163,4 +163,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-```[[1](https://www.google.com/url?sa=E&q=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQGrkuNGn0DaLqXd_5zn6PzJmj2kW4RE42IhMjCrLWRSdSP5PBL3dyCb8E6HkLhMOZnXU5laJxehfXm2SJxMbxD09tubXVXKI-3Soc3Vz8VG-O4XLFjoOw3E4e7StkbEdT2cJ8Obz58wkO1RgQ8xzHN_C7Mp_dznVtw0vt-j4AT3mR6FpFyV7463ryP2dGMUwsMKYIX6y3tEGfK5Wrfen9NvhD1kk9gLY5U0KPD58Qd3IsMR_g9DWi0%3D)]

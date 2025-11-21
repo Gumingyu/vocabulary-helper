@@ -102,8 +102,8 @@ def get_gemini_response(api_key, text_content):
     genai.configure(api_key=api_key)
     
     # Use a model optimized for speed and JSON structure
-    model = genai.GenerativeModel('gemini-1.5-flash')
-
+    model = genai.GenerativeModel('gemini-2.5-flash')
+```[[1](https://www.google.com/url?sa=E&q=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQFvbH_P80KkfelO6FOXDAJ7bKDtx9HphszU3dVrA-prI759wn5W5MKmjjJzjJdaV1FnknmzUfCMrVRxy7er7O-lO_-vAb6E6Hzysax83jPD517GysTFag4bfqBcNfCbKXUepBc610nHqzq9WTYctncP_16Xl-gQhRBVeAvUmsyJQBhAKIJffcAAhqe3kCLSdr58gXojzXDDquw1iYt1sEeALhU6zjMggKyQj8RZzyqw_IedIfbY)]
     prompt = f"""
     You are an expert English teacher for Chinese Senior High School students. 
     

@@ -13,76 +13,35 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- CUSTOM CSS FOR "PRETTY" UI ---
+# --- CUSTOM CSS ---
 st.markdown("""
 <style>
-    /* General App Styling */
-    .stApp {
-        background-color: #f8f9fa;
-    }
-    
-    /* Card Container Styling */
+    .stApp { background-color: #f8f9fa; }
     .vocab-card {
         background-color: white;
         padding: 20px;
         border-radius: 15px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         margin-bottom: 20px;
-        border-left: 5px solid #6366f1; /* Indigo accent */
+        border-left: 5px solid #6366f1;
         transition: transform 0.2s;
     }
-    .vocab-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-    }
-
-    /* Text Styling */
-    .word-title {
-        font-size: 28px;
-        font-weight: 800;
-        color: #1e293b;
-        margin-bottom: 5px;
-    }
-    .phonetic {
-        font-family: monospace;
-        color: #64748b;
-        font-size: 16px;
-    }
-    .meaning {
-        font-size: 20px;
-        color: #4f46e5;
-        font-weight: 600;
-        margin-top: 10px;
-    }
+    .vocab-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+    .word-title { font-size: 28px; font-weight: 800; color: #1e293b; margin-bottom: 5px; }
+    .phonetic { font-family: monospace; color: #64748b; font-size: 16px; }
+    .meaning { font-size: 20px; color: #4f46e5; font-weight: 600; margin-top: 10px; }
     .funny-sentence {
-        background-color: #e0e7ff; /* Light indigo bg */
-        color: #3730a3;
-        padding: 10px;
-        border-radius: 8px;
-        font-style: italic;
-        margin-top: 10px;
+        background-color: #e0e7ff; color: #3730a3; padding: 10px;
+        border-radius: 8px; font-style: italic; margin-top: 10px;
         border: 1px dashed #818cf8;
     }
-    .tag {
-        display: inline-block;
-        background: #f1f5f9;
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 12px;
-        color: #475569;
-        margin-right: 5px;
-    }
-    
-    /* Hide default Streamlit elements we don't need */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    #MainMenu {visibility: hidden;} footer {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
 # --- HELPER FUNCTIONS ---
 
 def extract_text(uploaded_file):
-    """Extracts text from PDF or DOCX."""
     text = ""
     try:
         if uploaded_file.name.endswith('.pdf'):
@@ -98,45 +57,42 @@ def extract_text(uploaded_file):
     return text
 
 def get_gemini_response(api_key, text_content):
-    """Sends text to Gemini and asks for structured JSON vocabulary."""
+    # Configure API
     genai.configure(api_key=api_key)
     
-    # Use a model optimized for speed and JSON structure
-    model = genai.GenerativeModel('gemini-2.5-flash')
-```[[1](https://www.google.com/url?sa=E&q=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQFvbH_P80KkfelO6FOXDAJ7bKDtx9HphszU3dVrA-prI759wn5W5MKmjjJzjJdaV1FnknmzUfCMrVRxy7er7O-lO_-vAb6E6Hzysax83jPD517GysTFag4bfqBcNfCbKXUepBc610nHqzq9WTYctncP_16Xl-gQhRBVeAvUmsyJQBhAKIJffcAAhqe3kCLSdr58gXojzXDDquw1iYt1sEeALhU6zjMggKyQj8RZzyqw_IedIfbY)]
+    # UPDATED MODEL NAME HERE:
+    try:
+        model = genai.GenerativeModel('gemini-2.5-flash') 
+    except:
+        # Fallback if 2.5 isn't available in your region yet, try 1.5-pro
+        model = genai.GenerativeModel('gemini-1.5-pro')
+
     prompt = f"""
     You are an expert English teacher for Chinese Senior High School students. 
     
     TASK: 
-    1. Analyze the following text and identify the top 10-15 most important/difficult vocabulary words suitable for the 'Gaokao' (Chinese College Entrance Exam) level.
-    2. For each word, provide:
-       - The Word itself.
-       - IPA Phonetic symbol (optional but good).
-       - Chinese Definition (Accurate Gaokao standard).
-       - 2 Common Phrases/Collocations.
-       - 1 "Gen Z" Example Sentence. This sentence MUST be funny, relatable to teenagers (homework, gaming, sleep deprivation), or reference pop culture (Marvel, Taylor Swift, Anime). It should NOT be a boring textbook sentence.
-
+    1. Analyze the text and find the top 10 most difficult vocabulary words suitable for 'Gaokao'.
+    2. For each word provide: Word, Phonetic, Chinese Definition, 2 Phrases, 1 Funny/Gen-Z Sentence.
+    
     TEXT TO ANALYZE:
-    {text_content[:8000]}  # Limiting text length for safety
+    {text_content[:10000]}
 
-    OUTPUT FORMAT:
-    Return ONLY valid JSON. The structure should be a list of objects:
+    OUTPUT FORMAT (Strict JSON):
     [
         {{
             "word": "English Word",
             "phonetic": "/.../",
             "chinese_meaning": "中文意思",
             "phrases": ["phrase 1", "phrase 2"],
-            "fun_sentence": "The funny sentence here."
-        }},
-        ...
+            "fun_sentence": "Funny sentence here."
+        }}
     ]
     """
     
     try:
-        with st.spinner("🤖 AI is reading your file and writing jokes..."):
+        with st.spinner("🤖 AI is analyzing vocabulary..."):
             response = model.generate_content(prompt)
-            # Clean up JSON if Gemini adds markdown backticks
+            # Clean JSON string
             json_text = response.text.replace("```json", "").replace("```", "").strip()
             data = json.loads(json_text)
             return data
@@ -144,107 +100,53 @@ def get_gemini_response(api_key, text_content):
         st.error(f"AI Error: {e}")
         return []
 
-# --- MAIN APP LOGIC ---
-
+# --- MAIN APP ---
 def main():
-    # Sidebar
     with st.sidebar:
         st.title("📚 Teacher Setup")
-        
-        # Try to get key from secrets, otherwise ask for it
+        # Check secrets first, then ask user
         if "GOOGLE_API_KEY" in st.secrets:
             api_key = st.secrets["GOOGLE_API_KEY"]
+            st.success("API Key loaded from Secrets!")
         else:
-            api_key = st.text_input("Enter Google Gemini API Key", type="password")
-        st.caption("[Get a free key here](https://aistudio.google.com/app/apikey)")
+            api_key = st.text_input("Enter Gemini API Key", type="password")
+            
+        uploaded_file = st.file_uploader("Upload File (PDF/Word)", type=['pdf', 'docx'])
         
-        uploaded_file = st.file_uploader("Upload Lesson Material", type=['pdf', 'docx'])
-        
-        if st.button("🚀 Generate Flashcards", type="primary"):
-            if not api_key:
-                st.warning("Please enter an API Key first.")
-            elif not uploaded_file:
-                st.warning("Please upload a file.")
+        if st.button("🚀 Generate", type="primary"):
+            if not api_key or not uploaded_file:
+                st.warning("Missing API Key or File")
             else:
-                # Process
                 raw_text = extract_text(uploaded_file)
                 if raw_text:
-                    vocab_data = get_gemini_response(api_key, raw_text)
-                    st.session_state['vocab_data'] = vocab_data
-                    st.session_state['show_answers'] = {} # Reset quiz states
-                    st.success("Vocabulary extracted successfully!")
+                    st.session_state['vocab_data'] = get_gemini_response(api_key, raw_text)
+                    st.session_state['show_answers'] = {}
 
-    # Main Content
     st.title("⚡ English Power-Up")
-    st.caption("Designed for Senior High Students")
-
-    if 'vocab_data' not in st.session_state or not st.session_state['vocab_data']:
-        # Welcome Screen
-        st.info("👈 Teachers: Upload a file on the left to start.")
-        st.markdown("""
-        ### How it works:
-        1. **Upload** a reading passage or word list.
-        2. **AI** extracts key words and creates funny examples.
-        3. **Students** study with interactive cards or take a quiz.
-        """)
-    else:
-        # Mode Selection
-        tab1, tab2 = st.tabs(["📖 Study Mode", "🧠 Quiz Mode"])
-
-        # --- STUDY MODE ---
+    
+    if 'vocab_data' in st.session_state and st.session_state['vocab_data']:
+        tab1, tab2 = st.tabs(["📖 Study", "🧠 Quiz"])
+        
         with tab1:
-            st.write(f"Found {len(st.session_state['vocab_data'])} key words.")
-            
-            # Grid layout for cards
-            for idx, item in enumerate(st.session_state['vocab_data']):
-                # HTML Card
-                card_html = f"""
+            for item in st.session_state['vocab_data']:
+                st.markdown(f"""
                 <div class="vocab-card">
                     <div class="word-title">{item['word']} <span class="phonetic">{item.get('phonetic', '')}</span></div>
                 </div>
-                """
-                st.markdown(card_html, unsafe_allow_html=True)
-                
-                # Native Streamlit Expander for the "Reveal" interaction
-                with st.expander(f"Show Meaning for **{item['word']}**"):
-                    st.markdown(f"### {item['chinese_meaning']}")
-                    st.markdown("**Common Phrases:**")
-                    for p in item['phrases']:
-                        st.markdown(f"- *{p}*")
-                    
-                    st.markdown("**💡 Example:**")
-                    st.markdown(f"<div class='funny-sentence'>{item['fun_sentence']}</div>", unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
+                with st.expander(f"Reveal {item['word']}"):
+                    st.write(f"**{item['chinese_meaning']}**")
+                    st.write(f"*{', '.join(item['phrases'])}*")
+                    st.info(item['fun_sentence'])
 
-        # --- QUIZ MODE ---
         with tab2:
-            st.write("Guess the word based on the funny sentence!")
-            
             for idx, item in enumerate(st.session_state['vocab_data']):
-                word = item['word']
-                sentence = item['fun_sentence']
-                
-                # Create a blanked-out sentence (case insensitive replacement)
                 import re
-                blanked_sentence = re.sub(re.escape(word), "_______", sentence, flags=re.IGNORECASE)
-                
-                st.markdown("---")
-                st.markdown(f"**Q{idx+1}:** {blanked_sentence}")
-                
-                # Use session state to toggle individual answers
-                key = f"quiz_reveal_{idx}"
-                if key not in st.session_state:
-                    st.session_state[key] = False
-                
-                col1, col2 = st.columns([1, 4])
-                with col1:
-                    if st.button(f"Reveal Answer #{idx+1}"):
-                        st.session_state[key] = True
-                
-                with col2:
-                    if st.session_state[key]:
-                        st.success(f"**{word}** ({item['chinese_meaning']})")
-                    else:
-                        st.markdown("waiting...")
+                blank = re.sub(re.escape(item['word']), "_______", item['fun_sentence'], flags=re.I)
+                st.markdown(f"**Q{idx+1}:** {blank}")
+                if st.button(f"Check Answer {idx+1}"):
+                    st.success(f"{item['word']} - {item['chinese_meaning']}")
 
 if __name__ == "__main__":
     main()
+```[[2](https://www.google.com/url?sa=E&q=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQFcXLxArErFj0DjwMgPXmzjOJjEyRBXzxb3JAN6lo6y7Z9JENGkt8eSkXVwwx1g7I7bWTwJ0yeUnMMnV-Kz3lNC62EUwtjqPVFEeOFBvzfmCnGleAtsy-vLqb6G7CzmS2xGpoBxJiI7tm085iGS5as2Mn9WxDLdP2tvQULBUS2K3IEgc1wbQUexSbpwMAyg01bnfFjR08FM_CJpwiAFckRDKhBEW_EChT2qgJh3RPH3TRbLQq-fh2T1)]

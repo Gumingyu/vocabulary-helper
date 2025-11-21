@@ -4,10 +4,11 @@ import json
 import PyPDF2
 from docx import Document
 import io
+import re
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
-    page_title="Vocab Master 3000",
+    page_title="Vocab Master",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -60,11 +61,11 @@ def get_gemini_response(api_key, text_content):
     # Configure API
     genai.configure(api_key=api_key)
     
-    # UPDATED MODEL NAME HERE:
+    # USING THE LATEST STABLE MODEL FOR LATE 2025
     try:
         model = genai.GenerativeModel('gemini-2.5-flash') 
     except:
-        # Fallback if 2.5 isn't available in your region yet, try 1.5-pro
+        # Fallback to 1.5 Pro if 2.5 is not active in your region yet
         model = genai.GenerativeModel('gemini-1.5-pro')
 
     prompt = f"""
@@ -114,13 +115,18 @@ def main():
         uploaded_file = st.file_uploader("Upload File (PDF/Word)", type=['pdf', 'docx'])
         
         if st.button("🚀 Generate", type="primary"):
-            if not api_key or not uploaded_file:
-                st.warning("Missing API Key or File")
+            if not api_key:
+                 st.warning("Please enter your API Key.")
+            elif not uploaded_file:
+                st.warning("Please upload a file.")
             else:
                 raw_text = extract_text(uploaded_file)
                 if raw_text:
                     st.session_state['vocab_data'] = get_gemini_response(api_key, raw_text)
-                    st.session_state['show_answers'] = {}
+                    # Clear old quiz answers when generating new set
+                    keys_to_remove = [k for k in st.session_state.keys() if k.startswith('quiz_reveal_')]
+                    for k in keys_to_remove:
+                        del st.session_state[k]
 
     st.title("⚡ English Power-Up")
     
@@ -140,13 +146,21 @@ def main():
                     st.info(item['fun_sentence'])
 
         with tab2:
+            st.info("Can you guess the word based on the sentence?")
             for idx, item in enumerate(st.session_state['vocab_data']):
-                import re
+                # Replace word with underscores
                 blank = re.sub(re.escape(item['word']), "_______", item['fun_sentence'], flags=re.I)
-                st.markdown(f"**Q{idx+1}:** {blank}")
-                if st.button(f"Check Answer {idx+1}"):
-                    st.success(f"{item['word']} - {item['chinese_meaning']}")
+                st.markdown(f"**{idx+1}.** {blank}")
+                
+                # Button to reveal answer
+                reveal_key = f"quiz_reveal_{idx}"
+                if st.button(f"Check Answer {idx+1}", key=f"btn_{idx}"):
+                    st.session_state[reveal_key] = True
+                
+                if st.session_state.get(reveal_key, False):
+                    st.success(f"**{item['word']}**: {item['chinese_meaning']}")
+                st.markdown("---")
 
 if __name__ == "__main__":
     main()
-```[[2](https://www.google.com/url?sa=E&q=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQFcXLxArErFj0DjwMgPXmzjOJjEyRBXzxb3JAN6lo6y7Z9JENGkt8eSkXVwwx1g7I7bWTwJ0yeUnMMnV-Kz3lNC62EUwtjqPVFEeOFBvzfmCnGleAtsy-vLqb6G7CzmS2xGpoBxJiI7tm085iGS5as2Mn9WxDLdP2tvQULBUS2K3IEgc1wbQUexSbpwMAyg01bnfFjR08FM_CJpwiAFckRDKhBEW_EChT2qgJh3RPH3TRbLQq-fh2T1)]
+```[[1](https://www.google.com/url?sa=E&q=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fgrounding-api-redirect%2FAUZIYQGrkuNGn0DaLqXd_5zn6PzJmj2kW4RE42IhMjCrLWRSdSP5PBL3dyCb8E6HkLhMOZnXU5laJxehfXm2SJxMbxD09tubXVXKI-3Soc3Vz8VG-O4XLFjoOw3E4e7StkbEdT2cJ8Obz58wkO1RgQ8xzHN_C7Mp_dznVtw0vt-j4AT3mR6FpFyV7463ryP2dGMUwsMKYIX6y3tEGfK5Wrfen9NvhD1kk9gLY5U0KPD58Qd3IsMR_g9DWi0%3D)]

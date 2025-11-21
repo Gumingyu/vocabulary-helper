@@ -6,148 +6,42 @@ from docx import Document
 import re
 
 # ==========================================
-# 👇 TEACHER: PASTE YOUR GENERATED DATA HERE 👇
-# ==========================================
-LESSON_DATA = [
-    {
-        "word": "Awkward",
-        "phonetic": "/O:kwd/",
-        "chinese_meaning": "令人尴尬的；难对付的",
-        "phrases": [
-            "feel awkward",
-            "an awkward situation"
-        ],
-        "fun_sentence": "My first attempt at dancing was so awkward that I accidentally stepped on my teacher's foot!"
-    },
-    {
-        "word": "Impression",
-        "phonetic": "/Impren/",
-        "chinese_meaning": "印象；感想",
-        "phrases": [
-            "make an impression",
-            "first impression"
-        ],
-        "fun_sentence": "I tried to make a good impression on the cat, but it just yawned and walked away."
-    },
-    {
-        "word": "Concentrate",
-        "phonetic": "/knsntreIt/",
-        "chinese_meaning": "集中（注意力）；聚精会神",
-        "phrases": [
-            "concentrate on",
-            "concentrate on your studies"
-        ],
-        "fun_sentence": "I can't concentrate on my homework when there's a squirrel doing parkour outside my window!"
-    },
-    {
-        "word": "Outgoing",
-        "phonetic": "/atgIN/",
-        "chinese_meaning": "爱交际的；外向的",
-        "phrases": [
-            "an outgoing personality",
-            "outgoing and friendly"
-        ],
-        "fun_sentence": "My outgoing dog greets everyone at the park, even the trees!"
-    },
-    {
-        "word": "Anxious",
-        "phonetic": "/Nks/",
-        "chinese_meaning": "焦虑的；不安的",
-        "phrases": [
-            "anxious about",
-            "feel anxious"
-        ],
-        "fun_sentence": "I felt anxious waiting for my pizza, worried they might have run out of cheese!"
-    },
-    {
-        "word": "Suitable",
-        "phonetic": "/su:tbl/",
-        "chinese_meaning": "合适的；适用的",
-        "phrases": [
-            "suitable for",
-            "find something suitable"
-        ],
-        "fun_sentence": "This tiny hat is not suitable for my enormous brain, but it looks funny!"
-    },
-    {
-        "word": "Challenge",
-        "phonetic": "/tlInd/",
-        "chinese_meaning": "挑战；艰巨任务 (n.) / 怀疑；向……挑战 (vt.)",
-        "phrases": [
-            "face a challenge",
-            "take on a challenge"
-        ],
-        "fun_sentence": "It was a real challenge to teach my cat to fetch, but now he brings me socks!"
-    },
-    {
-        "word": "Confusing",
-        "phonetic": "/knfju:zIN/",
-        "chinese_meaning": "难以理解的；不清楚的",
-        "phrases": [
-            "a confusing situation",
-            "find something confusing"
-        ],
-        "fun_sentence": "The instruction manual for my new gadget was so confusing, it told me to 'turn left at the imaginary unicorn.'"
-    },
-    {
-        "word": "Responsible",
-        "phonetic": "/rIspnsbl/",
-        "chinese_meaning": "负责的；有责任的",
-        "phrases": [
-            "be responsible for",
-            "a responsible student"
-        ],
-        "fun_sentence": "Being responsible for watering the plants means I sometimes forget, and they give me the 'leafy silent treatment.'"
-    },
-    {
-        "word": "Accommodation",
-        "phonetic": "/kmdeIn/",
-        "chinese_meaning": "住处；停留处；膳宿",
-        "phrases": [
-            "student accommodation",
-            "book accommodation"
-        ],
-        "fun_sentence": "Finding cheap accommodation for my pet squirrel was a challenge, especially since he demanded a nut-filled mini-fridge."
-    },
-    {
-        "word": "Strategy",
-        "phonetic": "/strtdi/",
-        "chinese_meaning": "策略；策划",
-        "phrases": [
-            "marketing strategy",
-            "a winning strategy"
-        ],
-        "fun_sentence": "My strategy for avoiding chores is to pretend I'm a statue, but my mom's strategy is to tickle me until I move."
-    },
-    {
-        "word": "Literature",
-        "phonetic": "/lItrt(r)/",
-        "chinese_meaning": "文学；文学作品",
-        "phrases": [
-            "Chinese literature",
-            "study literature"
-        ],
-        "fun_sentence": "I tried to read classic literature to my goldfish, but he seemed more interested in chasing bubbles."
-    }
-] 
-# (Currently empty. You will fill this in Step 3)
+# 📚 UNIT DATABASE (Paste your generated lists here)
 # ==========================================
 
+UNIT_DATA = {
+    
+    # Example Unit (You can delete this later)
+    "Demo Unit": [
+        {"word": "Resilient", "phonetic": "/rɪˈzɪljənt/", "chinese_meaning": "有弹性的；能复原的", "phrases": ["remain resilient", "resilient economy"], "fun_sentence": "I thought I was resilient until I saw my math score."},
+        {"word": "Ambiguous", "phonetic": "/æmˈbɪɡjuəs/", "chinese_meaning": "模棱两可的", "phrases": ["ambiguous attitude", "ambiguous answer"], "fun_sentence": "Her reply to 'do you like him' was so ambiguous even the FBI couldn't decode it."}
+    ],
 
-# --- PAGE CONFIGURATION ---
+    # PASTE NEW UNITS BELOW THIS LINE ----------------
+    
+    # "Unit 1": [ ... paste code here ... ],
+    # "Unit 2": [ ... paste code here ... ],
+
+}
+
+# ==========================================
+# ⚙️ APP SETUP
+# ==========================================
 st.set_page_config(page_title="Vocab Master", page_icon="⚡", layout="wide")
 
-# --- CSS ---
 st.markdown("""
 <style>
     .vocab-card {
-        background-color: white; padding: 20px; border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;
+        background-color: white; padding: 20px; border-radius: 12px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px;
         border-left: 5px solid #6366f1;
     }
-    .word-title { font-size: 24px; font-weight: 800; color: #1e293b; }
-    .meaning { color: #4f46e5; font-weight: 600; }
-    .funny-sentence { background-color: #e0e7ff; padding: 10px; border-radius: 8px; font-style: italic; margin-top: 10px; }
+    .word-header { display: flex; justify-content: space-between; align-items: center; }
+    .word-text { font-size: 26px; font-weight: 800; color: #1e293b; }
+    .phonetic { font-family: monospace; color: #64748b; font-size: 16px; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; }
+    .meaning { color: #4f46e5; font-size: 18px; font-weight: 600; margin-top: 5px;}
+    .example-box { background-color: #eef2ff; padding: 12px; border-radius: 8px; font-style: italic; margin-top: 12px; color: #3730a3; border: 1px dashed #c7d2fe; }
+    .phrase-box { margin-top: 8px; color: #475569; font-size: 14px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -157,113 +51,132 @@ def get_active_model_name(api_key):
     try:
         models = list(genai.list_models())
         for m in models:
-            if 'generateContent' in m.supported_generation_methods:
-                if 'flash' in m.name.lower(): return m.name
-        return "models/gemini-pro"
+            if 'generateContent' in m.supported_generation_methods and 'flash' in m.name.lower():
+                return m.name
+        return "models/gemini-1.5-flash"
     except: return "models/gemini-1.5-flash"
 
 def extract_text(uploaded_file):
     text = ""
     try:
         if uploaded_file.name.endswith('.pdf'):
-            pdf_reader = PyPDF2.PdfReader(uploaded_file)
-            for page in pdf_reader.pages: text += page.extract_text() or ""
+            reader = PyPDF2.PdfReader(uploaded_file)
+            for page in reader.pages: text += page.extract_text() or ""
         elif uploaded_file.name.endswith('.docx'):
             doc = Document(uploaded_file)
             for para in doc.paragraphs: text += para.text + "\n"
-    except Exception as e: st.error(f"Error: {e}")
+    except: pass
     return text
 
-def get_gemini_response(api_key, text_content):
+def generate_vocab(api_key, text, count):
     model_name = get_active_model_name(api_key)
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel(model_name)
+    
     prompt = f"""
-    Act as an English Teacher for Chinese students. Extract 8-12 difficult words.
-    Return a JSON LIST. Format:
+    Act as a cool English teacher. Extract exactly {count} key vocabulary words from the text.
+    Target Audience: Chinese Senior High School (Gaokao level).
+    
+    Return JSON LIST:
     [
       {{
         "word": "Word",
-        "phonetic": "/.../",
-        "chinese_meaning": "Meaning",
+        "phonetic": "/IPA/",
+        "chinese_meaning": "Precise Chinese Meaning",
         "phrases": ["phrase 1", "phrase 2"],
-        "fun_sentence": "Funny sentence."
+        "fun_sentence": "A funny, memorable sentence relating to student life/pop culture."
       }}
     ]
-    TEXT: {text_content[:5000]} 
+    TEXT: {text[:8000]}
     """
     try:
         response = model.generate_content(prompt)
         match = re.search(r'\[.*\]', response.text, re.DOTALL)
-        if match: return json.loads(match.group(0))
-        return []
+        return json.loads(match.group(0)) if match else []
     except: return []
 
-# --- MAIN APP LOGIC ---
+# --- MAIN NAVIGATION ---
 def main():
-    # CHECK: Is there data in LESSON_DATA?
-    if LESSON_DATA:
-        # ==========================================
-        # 🎓 STUDENT VIEW (What students see)
-        # ==========================================
-        st.title("⚡ English Power-Up")
-        st.caption("Lesson of the Week")
+    # Sidebar Navigation
+    with st.sidebar:
+        st.title("📚 Library")
+        mode = st.radio("Mode:", ["Student View", "Teacher Generator"])
         
-        tabs = st.tabs(["📖 Flashcards", "🧠 Quiz Mode"])
+        if mode == "Student View":
+            selected_unit = st.selectbox("Select Unit:", list(UNIT_DATA.keys()))
         
-        with tabs[0]:
-            for item in LESSON_DATA:
+        # KEY HANDLING (Load from secrets or ask user)
+        api_key = st.secrets.get("GOOGLE_API_KEY", None)
+        if not api_key:
+            api_key = st.text_input("API Key (Teacher Only)", type="password")
+
+    # --- MODE 1: STUDENT VIEW ---
+    if mode == "Student View":
+        data = UNIT_DATA.get(selected_unit, [])
+        st.title(f"📖 {selected_unit}")
+        
+        if not data:
+            st.error("This unit is empty.")
+            return
+
+        # TABS: Separate Reading from Testing
+        tab_read, tab_quiz = st.tabs(["👀 Review Words", "📝 Quiz Mode"])
+
+        with tab_read:
+            for item in data:
+                # Beautiful Card UI
                 st.markdown(f"""
                 <div class="vocab-card">
-                    <div class="word-title">{item.get('word')} <span style="font-size:14px;color:#666">{item.get('phonetic','')}</span></div>
-                    <div class="meaning">{item.get('chinese_meaning')}</div>
-                    <div style="margin-top:10px;color:#444">👉 {', '.join(item.get('phrases',[]))}</div>
-                    <div class="funny-sentence">"{item.get('fun_sentence')}"</div>
+                    <div class="word-header">
+                        <span class="word-text">{item['word']}</span>
+                        <span class="phonetic">{item.get('phonetic','')}</span>
+                    </div>
+                    <div class="meaning">{item['chinese_meaning']}</div>
+                    <div class="phrase-box">📌 {', '.join(item.get('phrases',[]))}</div>
+                    <div class="example-box">"{item['fun_sentence']}"</div>
                 </div>
                 """, unsafe_allow_html=True)
 
-        with tabs[1]:
-            st.info("Guess the word!")
-            for i, item in enumerate(LESSON_DATA):
+        with tab_quiz:
+            st.caption("Cover the screen and guess!")
+            for i, item in enumerate(data):
+                # Create blank sentence
                 blank = re.sub(re.escape(item['word']), "_______", item['fun_sentence'], flags=re.I)
-                st.markdown(f"**{i+1}.** {blank}")
-                if st.button(f"Check Answer {i+1}"):
-                    st.success(f"{item['word']} ({item['chinese_meaning']})")
+                
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    st.markdown(f"**{i+1}.** {blank}")
+                with col2:
+                    if st.button(f"Reveal #{i+1}"):
+                        st.info(f"{item['word']} - {item['chinese_meaning']}")
                 st.divider()
 
-    else:
-        # ==========================================
-        # 🛠 TEACHER VIEW (Generator)
-        # ==========================================
-        st.title("🛠 Teacher Generator")
-        st.warning("You are in 'Generator Mode'. Students will only see what you generate here.")
+    # --- MODE 2: TEACHER GENERATOR ---
+    elif mode == "Teacher Generator":
+        st.title("🛠 Generate New Unit")
+        st.info("Upload a file, generate the list, and paste the code into 'UNIT_DATA' in app.py")
         
-        with st.sidebar:
-            if "GOOGLE_API_KEY" in st.secrets:
-                api_key = st.secrets["GOOGLE_API_KEY"]
+        uploaded_file = st.file_uploader("Upload PDF/Word")
+        word_count = st.slider("How many words?", 5, 30, 15)
+        unit_name = st.text_input("Name this Unit (e.g., 'Unit 3')", "New Unit")
+        
+        if st.button("Generate Code"):
+            if not api_key or not uploaded_file:
+                st.warning("Missing API Key or File")
             else:
-                api_key = st.text_input("API Key", type="password")
-            
-            uploaded_file = st.file_uploader("Upload Lesson PDF/Docx", type=['pdf', 'docx'])
-
-        if st.button("Generate Lesson Data", type="primary"):
-            if api_key and uploaded_file:
-                with st.spinner("Generating..."):
+                with st.spinner("Analyzing text..."):
                     raw_text = extract_text(uploaded_file)
-                    data = get_gemini_response(api_key, raw_text)
+                    new_data = generate_vocab(api_key, raw_text, word_count)
                     
-                    if data:
-                        st.success("Success! Copy the code below:")
-                        st.markdown("### 👇 COPY EVERYTHING IN THIS BOX 👇")
-                        
-                        # Print the data formatted as Python code
-                        code_to_copy = f"LESSON_DATA = {json.dumps(data, ensure_ascii=False, indent=4)}"
-                        st.code(code_to_copy, language="python")
-                        
-                        st.markdown("### 🛑 Next Step:")
-                        st.info("1. Copy the code above.\n2. Go to GitHub -> app.py.\n3. Delete 'LESSON_DATA = []'.\n4. Paste your code there.\n5. Commit changes.")
+                    if new_data:
+                        st.success("Generated! Copy the code below:")
+                        # Format the output to be easily copy-pasteable
+                        json_str = json.dumps(new_data, ensure_ascii=False, indent=4)
+                        code_block = f'"{unit_name}": {json_str},'
+                        st.code(code_block, language="python")
+                        st.warning("Copy the text above and paste it inside the UNIT_DATA dictionary in app.py")
                     else:
-                        st.error("AI failed. Try again.")
+                        st.error("AI failed. Try fewer words or a different file.")
 
 if __name__ == "__main__":
     main()
